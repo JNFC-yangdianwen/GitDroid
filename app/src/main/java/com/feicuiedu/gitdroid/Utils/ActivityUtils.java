@@ -57,7 +57,7 @@ public class ActivityUtils {
             showToast(msg);
         }
     }
-      //开启跳转的意图
+      //开启跳转的意图，参数为activity类型
     public void startActivity(Class<? extends Activity> clazz){
         Activity activity = getActivity();
         if (activity == null) return;
@@ -101,7 +101,6 @@ public class ActivityUtils {
         getActivity().getWindowManager().getDefaultDisplay().getMetrics(metrics);
         return metrics.heightPixels;
     }
-
     public void hideSoftKeyboard(){
         Activity activity = getActivity();
         if (activity == null) return;

@@ -14,6 +14,7 @@ import butterknife.ButterKnife;
 
 /**
  * Created by yangdianwen on 16-6-28.--
+ * 该类同viewpager,viewpager1
  * 设置pager2的widget动画
  */
 public class PagerView2 extends FrameLayout {

@@ -7,6 +7,8 @@ import android.widget.FrameLayout;
 
 /**
  * Created by yangdianwen on 16-6-28.
+ * viewpager的子视图继承FrameLayout,重写FrameLayout的三个constructor,在每个constructor都必须调用
+ *  init方法
  */
 public class PagerView extends FrameLayout {
     public PagerView(Context context) {
@@ -23,7 +25,7 @@ public class PagerView extends FrameLayout {
         super(context, attrs, defStyleAttr);
         init();
     }
-
+    //初始化视图,使用布局加载器加载视图
     private void init() {
         LayoutInflater.from(getContext()).inflate(R.layout.content_pager_0,this,true);
     }

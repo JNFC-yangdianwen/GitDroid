@@ -7,6 +7,7 @@ import android.widget.FrameLayout;
 
 /**
  * Created by yangdianwen on 16-6-28.
+ *该类同pagerview
  */
 public class PagerView1 extends FrameLayout {
     public PagerView1(Context context) {
