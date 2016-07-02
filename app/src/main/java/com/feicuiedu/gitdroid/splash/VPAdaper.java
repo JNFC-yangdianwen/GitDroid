@@ -1,9 +1,13 @@
-package com.feicuiedu.gitdroid;
+package com.feicuiedu.gitdroid.splash;
 
 import android.content.Context;
 import android.support.v4.view.PagerAdapter;
 import android.view.View;
 import android.view.ViewGroup;
+
+import com.feicuiedu.gitdroid.splash.PagerView;
+import com.feicuiedu.gitdroid.splash.PagerView1;
+import com.feicuiedu.gitdroid.splash.PagerView2;
 
 /**
  * Created by yangdianwen on 16-6-28.

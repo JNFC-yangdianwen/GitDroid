@@ -1,4 +1,4 @@
-package com.feicuiedu.gitdroid;
+package com.feicuiedu.gitdroid.Home;
 
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
@@ -11,6 +11,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 
+import com.feicuiedu.gitdroid.R;
 import com.feicuiedu.gitdroid.Utils.ActivityUtils;
 import com.feicuiedu.gitdroid.repo.HotRepoFragment;
 

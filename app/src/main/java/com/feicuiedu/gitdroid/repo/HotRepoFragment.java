@@ -16,6 +16,7 @@ import butterknife.ButterKnife;
 
 /**
  *Created by yangdianwen on 16-6-30.
+ * 热门仓库
  * viewpager的每个item的样式都是一个Fragment
  */
 public class HotRepoFragment extends Fragment {

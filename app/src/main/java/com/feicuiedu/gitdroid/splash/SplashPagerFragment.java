@@ -12,9 +12,7 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 
-import com.feicuiedu.gitdroid.PagerView2;
 import com.feicuiedu.gitdroid.R;
-import com.feicuiedu.gitdroid.VPAdaper;
 
 import butterknife.Bind;
 import butterknife.BindColor;

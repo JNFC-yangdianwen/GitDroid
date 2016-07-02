@@ -8,14 +8,21 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.TextView;
+import android.widget.Toast;
 
+import com.feicuiedu.gitdroid.Presenter.Presentr;
 import com.feicuiedu.gitdroid.R;
+import com.feicuiedu.gitdroid.View.FooterView;
+import com.feicuiedu.gitdroid.View.PagerView;
+import com.mugen.Mugen;
+import com.mugen.MugenCallbacks;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 import in.srain.cube.views.ptr.PtrClassicFrameLayout;
 import in.srain.cube.views.ptr.PtrDefaultHandler;
 import in.srain.cube.views.ptr.PtrFrameLayout;
@@ -24,91 +31,135 @@ import in.srain.cube.views.ptr.PtrFrameLayout;
  * Created by yangdianwen on 16-6-30.
  * 每一个fragment的样式都是listview
  */
-public class RepoListFragment extends Fragment {
-    @Bind(R.id.ptrClassicFrameLayout)PtrClassicFrameLayout pcfl;
-    private List<String>data=new ArrayList<>();;
-    @Bind(R.id.lvRepos)ListView listview;
-    private ArrayAdapter adapter;
+public class RepoListFragment extends Fragment implements PagerView {
+    @Bind(R.id.ptrClassicFrameLayout)
+    PtrClassicFrameLayout ptrFrameLayout;
+    @Bind(R.id.lvRepos)
+    ListView listView;
+    @Bind(R.id.emptyView)
+    TextView emptyView;
+    @Bind(R.id.errorView) TextView errorView;
 
-    @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        for (int i = 0; i <20 ; i++) {
-            data.add("第"+i+"项");
-        }
-    }
-    //创建view
+    private ArrayAdapter<String> adapter;
+
+    private FooterView footerView; // 上拉加载更多的视图
+    private Presentr presenter ;
     @Nullable
-    @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_repo_list,container,false);
+    @Override public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        return inflater.inflate(R.layout.fragment_repo_list, container, false);
     }
-    //当view被创建时,绑定ButterKnife
-    @Override
-    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+    //实例化RepoListFragment的方法
+    public static RepoListFragment getInstanceFragment(String index){
+        RepoListFragment f = new RepoListFragment();
+               Bundle args = new Bundle();
+               args.putSerializable("index", index);
+                f.setArguments(args);
+                return f;
+
+    }
+    @Override public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        ButterKnife.bind(this,view);
-        //创建ArrayAdapter
-        adapter=new ArrayAdapter(getActivity(),android.R.layout.simple_list_item_1);
-        //listview的setAdapter
-        listview.setAdapter(adapter);
-        //下拉刷新 设置数据处理的方式
-        pcfl.setPtrHandler(new PtrDefaultHandler() {
-            @Override
-            public void onRefreshBegin(PtrFrameLayout frame) {
-                //加载数据的方法
-                //创建一个线程,模拟网络的耗时操作
-                new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        loadData(20);
-                    }
-                }).start();
+        ButterKnife.bind(this, view);
+        //
+        adapter = new ArrayAdapter<String>(getContext(), android.R.layout.simple_list_item_1);
+        listView.setAdapter(adapter);
+        // 下拉刷新
+        presenter=new Presentr(this);
+        ptrFrameLayout.setPtrHandler(new PtrDefaultHandler() {
+            @Override public void onRefreshBegin(PtrFrameLayout frame) {
+                presenter.loadData();
             }
         });
-    }
-    //加载数据的方法
-    private void loadData(final int size) {
-
-        new Thread(new Runnable() {
+        footerView = new FooterView(getContext());
+        // 上拉加载更多(listview滑动动最后的位置了，就可以loadmore)
+        Mugen.with(listView, new MugenCallbacks() {
             @Override
-            public void run() {
-                   data.clear();
-                    for (int i = 0; i <size ; i++) {
-                        data.add("刷新数据"+i);
-                    }
+            public void onLoadMore() {
+                Toast.makeText(getContext(), "loadmore", Toast.LENGTH_SHORT).show();
+                presenter.loadMoreData();
+            }
+            // 是否正在加载，此方法用来避免重复加载
+            @Override public boolean isLoading() {
+                return listView.getFooterViewsCount() > 0 && footerView.isLoading();
+            }
+            // 是否所有数据都已加载
+            @Override public boolean hasLoadedAllItems() {
+                return listView.getFooterViewsCount() > 0 && footerView.isComplete();
             }
         }).start();
-        //刷新组件对数据的处理
-        pcfl.post(new Runnable() {
-            @Override
-            public void run() {
-               adapter.clear();
-                adapter.addAll(data);
-            }
-        });
-        //通知adapter数据改变
-        adapter.notifyDataSetChanged();
-        //刷新组件调用刷新完成方法,隐藏headerLayout
-        pcfl.refreshComplete();
     }
-    //实例化fragment的方法
-    public static Fragment getInstanceFragment(String index){
-        //创建一个RepoListFragment对象
-        RepoListFragment hotRepoFragment = new RepoListFragment();
-        //实例化一个Bundle参数
-         Bundle args = new Bundle();
-        //使用Bundle序列化
-                args.putSerializable("index",index);
-        //RepoListFragment对象设置Argument参数
-               hotRepoFragment.setArguments(args);
-        //返回一个RepoListFragment对象
-                return hotRepoFragment;
+    @OnClick({R.id.emptyView, R.id.errorView})
+    public void autoRefresh() {
+        ptrFrameLayout.autoRefresh();
     }
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        //解绑butterknife
+    @Override public void onDestroyView() {
+        super.onDestroyView();
         ButterKnife.unbind(this);
     }
+    // 这是拉刷新视图的实现----------------------------------------------------------------
+    @Override public void showContentView() {
+        ptrFrameLayout.setVisibility(View.VISIBLE);
+        emptyView.setVisibility(View.GONE);
+        errorView.setVisibility(View.GONE);
+    }
+
+    @Override public void showErroView(String msg) {
+        ptrFrameLayout.setVisibility(View.GONE);
+        emptyView.setVisibility(View.GONE);
+        errorView.setVisibility(View.VISIBLE);
+    }
+
+    @Override public void showEmptyView() {
+        ptrFrameLayout.setVisibility(View.GONE);
+        emptyView.setVisibility(View.VISIBLE);
+        errorView.setVisibility(View.GONE);
+    }
+
+    @Override public void showMessage(String msg) {
+        Toast.makeText(getContext(), msg, Toast.LENGTH_SHORT).show();
+    }
+
+    @Override public void refreshData(List<String> datas) {
+        adapter.clear();
+        adapter.addAll(datas);
+    }
+    @Override public void stopRefresh() {
+        ptrFrameLayout.refreshComplete(); // 下拉刷新完成
+    }
+    // 这是上拉加载更多视图层实现------------------------------------------------------
+    @Override public void addMoreData(List<String> datas) {
+        adapter.addAll(datas);
+    }
+//
+//    @Override
+//    public void addMoreData(String datas) {
+//
+//    }
+
+    @Override public void hideLoadMore() {
+        listView.removeFooterView(footerView);
+    }
+
+    @Override public void showLoadMoreLoading() {
+        if (listView.getFooterViewsCount() == 0) {
+            listView.addFooterView(footerView);
+        }
+        footerView.showLoading();
+    }
+
+    @Override public void showLoadMoreErro(String msg) {
+        if (listView.getFooterViewsCount() == 0) {
+            listView.addFooterView(footerView);
+        }
+        footerView.showError(msg);
+    }
+
+    @Override public void showLoadMoreEnd() {
+        if (listView.getFooterViewsCount() == 0) {
+            listView.addFooterView(footerView);
+        }
+        footerView.showComplete();
+    }
+
+
 }

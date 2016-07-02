@@ -1,9 +1,11 @@
-package com.feicuiedu.gitdroid;
+package com.feicuiedu.gitdroid.splash;
 
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.widget.FrameLayout;
+
+import com.feicuiedu.gitdroid.R;
 
 /**
  * Created by yangdianwen on 16-6-28.
