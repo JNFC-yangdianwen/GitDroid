@@ -3,6 +3,7 @@ package com.feicuiedu.gitdroid.Presenter;
 import android.os.AsyncTask;
 
 import com.feicuiedu.gitdroid.View.PagerView;
+import com.hannesdorfmann.mosby.mvp.MvpNullObjectBasePresenter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,12 +12,7 @@ import java.util.Random;
 /**
  * Created by yangdianwen on 16-7-2.
  */
-public class Presentr {
-    private PagerView view;
-
-    public Presentr(PagerView view) {
-        this.view = view;
-    }
+public class Presenter extends MvpNullObjectBasePresenter<PagerView> {
     //下拉刷新加载数据的方法，使用异步处理机制
     public  void loadData(){
         new LoadAsyncTask().execute();
@@ -48,18 +44,18 @@ public class Presentr {
             int size=strings.size();
             //模拟空视图情况
             if (size==0){
-                view.showEmptyView();
+                getView().showEmptyView();
             }//显示错误视图情况
             else if (size==1){
-                view.showErroView("没有内容");
+                getView().showErroView("没有内容");
             }//显示内容视图情况
             else {
-                view.showContentView();
+                getView().showContentView();
                 //通知视图刷新数据
-                view.refreshData(strings);
+                getView().refreshData(strings);
             }
             //停止刷新
-            view.stopRefresh();
+            getView().stopRefresh();
         }
     }
     //使用异步任务处理上拉加载更多的数据
@@ -69,7 +65,7 @@ public class Presentr {
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            view.showLoadMoreLoading();
+            getView().showLoadMoreLoading();
         }
 
         //模拟网络获取数据
@@ -90,9 +86,10 @@ public class Presentr {
         @Override
         protected void onPostExecute(List<String> strings) {
             super.onPostExecute(strings);
-            view.addMoreData(strings);
-            view.hideLoadMore();
+            getView().addMoreData(strings);
+            getView().hideLoadMore();
 //            view.stopRefresh();
         }
     }
+
 }
