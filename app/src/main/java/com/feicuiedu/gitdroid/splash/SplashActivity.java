@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.Button;
 
+import com.feicuiedu.gitdroid.Login.LoginActivity;
 import com.feicuiedu.gitdroid.Home.MainActivity;
 import com.feicuiedu.gitdroid.R;
 import com.feicuiedu.gitdroid.Utils.ActivityUtils;
@@ -28,11 +29,10 @@ public class SplashActivity extends AppCompatActivity {
     }
     @OnClick(R.id.btnLogin)
     public void login(){
-
+          activityUtils.startActivity(LoginActivity.class);
     }
     @OnClick(R.id.btnEnter)
     public void enter(){
         activityUtils.startActivity(MainActivity.class);
-
     }
 }

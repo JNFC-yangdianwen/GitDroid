@@ -10,7 +10,10 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
 
+import com.feicuiedu.gitdroid.Login.LoginActivity;
 import com.feicuiedu.gitdroid.R;
 import com.feicuiedu.gitdroid.Utils.ActivityUtils;
 import com.feicuiedu.gitdroid.repo.HotRepoFragment;
@@ -28,6 +31,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @Bind(R.id.toolbar)Toolbar toolbar;
     ActivityUtils activityutils=new ActivityUtils(this);
     private HotRepoFragment hotRepoFragment;
+    private Button btnLogin;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,6 +52,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         drawerLayout.addDrawerListener(toggle);
         //toggle必须同步才能显示
         toggle.syncState();
+         btnLogin = ButterKnife.findById(navigationView.getHeaderView(0), R.id.btnLogin);
+        btnLogin.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                activityutils.startActivity(LoginActivity.class);
+            }
+        });
         //navigationView的item设置监听
         menuItem=navigationView.getMenu().findItem( R.id.github_hot_repo);
         menuItem.setChecked(true);
