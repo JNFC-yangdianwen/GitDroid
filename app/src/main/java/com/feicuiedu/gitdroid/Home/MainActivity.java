@@ -12,11 +12,14 @@ import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 
 import com.feicuiedu.gitdroid.Login.LoginActivity;
 import com.feicuiedu.gitdroid.R;
 import com.feicuiedu.gitdroid.Utils.ActivityUtils;
+import com.feicuiedu.gitdroid.network.CurrentUser;
 import com.feicuiedu.gitdroid.repo.HotRepoFragment;
+import com.nostra13.universalimageloader.core.ImageLoader;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -32,13 +35,17 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     ActivityUtils activityutils=new ActivityUtils(this);
     private HotRepoFragment hotRepoFragment;
     private Button btnLogin;
-
+    private ImageView ivIcon;
+    private static final String TAG = "MainActivity";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
     }
-        //当主界面内容改变时
+
+
+
+    //当主界面内容改变时
     @Override
     public void onContentChanged() {
         super.onContentChanged();
@@ -52,7 +59,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         drawerLayout.addDrawerListener(toggle);
         //toggle必须同步才能显示
         toggle.syncState();
-         btnLogin = ButterKnife.findById(navigationView.getHeaderView(0), R.id.btnLogin);
+        //登陆按钮的点击事件
+        /***
+         * 使用ButterKnife的findById（）
+         */
+        btnLogin =(Button) ButterKnife.findById(navigationView.getHeaderView(0), R.id.btnLogin);
+        ivIcon =(ImageView) ButterKnife.findById(navigationView.getHeaderView(0), R.id.ivIcon);
         btnLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -62,12 +74,39 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         //navigationView的item设置监听
         menuItem=navigationView.getMenu().findItem( R.id.github_hot_repo);
         menuItem.setChecked(true);
+        //设置navigationView的item的点击事件
         navigationView.setNavigationItemSelectedListener(this);
+        //主界面使用fragment
+        /***
+         * fragment的常规使用
+         *   1.获取FragmentManager
+         *   2.实例化hotRepoFragment对象
+         *   3.beginTransaction（开启事务）
+         *   4.替换布局replace
+         *   5.提交任务fragmentTransaction.commit();
+         */
         FragmentManager manager = getSupportFragmentManager();
         hotRepoFragment = new HotRepoFragment();
         FragmentTransaction fragmentTransaction = manager.beginTransaction();
         fragmentTransaction.replace(R.id.container,hotRepoFragment);
         fragmentTransaction.commit();
+    }
+    @Override
+    protected void onStart() {
+        super.onStart();
+        // 还没有授权登陆
+        if(CurrentUser.isEmpty()){
+            btnLogin.setText(R.string.login_github);
+            return;
+        }
+        // 已经授权登陆
+        btnLogin.setText(R.string.switch_account);
+        getSupportActionBar().setTitle(CurrentUser.getUser().getName());
+        // 设置用户头像
+        // 其它第三方图像缓存加载处理的控件来做
+        // 设置用户头像
+        String photoUrl = CurrentUser.getUser().getAvatar();
+        ImageLoader.getInstance().displayImage(photoUrl,ivIcon);
     }
   // navigationView的item的监听
     @Override
@@ -97,7 +136,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
            case R.id.tips_share:
 
            break;
-       }//返回true代表被checked
+       }
+        //返回true代表被checked
         return true;
     }
       // 当点击了返回按键时
