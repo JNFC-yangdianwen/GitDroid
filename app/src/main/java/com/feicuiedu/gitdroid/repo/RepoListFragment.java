@@ -26,6 +26,7 @@ import butterknife.OnClick;
 import in.srain.cube.views.ptr.PtrClassicFrameLayout;
 import in.srain.cube.views.ptr.PtrDefaultHandler;
 import in.srain.cube.views.ptr.PtrFrameLayout;
+import in.srain.cube.views.ptr.header.StoreHouseHeader;
 
 /**
  * Created by yangdianwen on 16-6-30.
@@ -43,6 +44,7 @@ public class RepoListFragment extends MvpFragment<PagerView,Presenter> implement
     Languages languages;
     private LanguageAdapter adapter;
     private FooterView footerView; // 上拉加载更多的视图
+    private static final String KEY_LANGUAGE = "key_language";
     @Nullable
     @Override public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         return inflater.inflate(R.layout.fragment_repo_list, container, false);
@@ -51,20 +53,47 @@ public class RepoListFragment extends MvpFragment<PagerView,Presenter> implement
     public static RepoListFragment getInstanceFragment(Languages language){
         RepoListFragment f = new RepoListFragment();
                Bundle args = new Bundle();
-               args.putSerializable("index", language);
+               args.putSerializable(KEY_LANGUAGE, language);
                 f.setArguments(args);
                 return f;
     }
+    private Languages getLanguage() {
+        return (Languages) getArguments().getSerializable(KEY_LANGUAGE);
+    }
+
     @Override
     public Presenter createPresenter() {
-        return new Presenter(languages);
+        return new Presenter(getLanguage());
     }
     @Override public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         ButterKnife.bind(this, view);
-
         adapter=new LanguageAdapter();
         listView.setAdapter(adapter);
+        //初始化下拉刷新
+        initPulltoRefresh();
+        //初始化上拉加载
+        initLoadData();
+        //默认加载数据
+        if (adapter.getCount() == 0) {
+            ptrFrameLayout.postDelayed(new Runnable() {
+                @Override public void run() {
+                    ptrFrameLayout.autoRefresh();
+                }
+            }, 200);
+        }
+    }
+
+    private void initPulltoRefresh() {
+        ptrFrameLayout.setLastUpdateTimeRelateObject(this);
+        ptrFrameLayout.setBackgroundResource(R.color.colorRefresh);
+        // 关闭Header所耗时长
+        ptrFrameLayout.setDurationToCloseHeader(1500);
+        StoreHouseHeader header = new StoreHouseHeader(getContext());
+        header.setPadding(0, 60, 0, 60);
+        header.initWithString("I like " + getLanguage().getName());
+        ptrFrameLayout.setHeaderView(header);
+        ptrFrameLayout.addPtrUIHandler(header);
         // 下拉刷新
         ptrFrameLayout.setPtrHandler(new PtrDefaultHandler() {
             @Override public void onRefreshBegin(PtrFrameLayout frame) {
@@ -72,6 +101,10 @@ public class RepoListFragment extends MvpFragment<PagerView,Presenter> implement
             }
         });
         //创建presenter对象
+
+    }
+
+    private void initLoadData() {
         footerView = new FooterView(getContext());
         // 上拉加载更多(listview滑动动最后的位置了，就可以loadmore)
         Mugen.with(listView, new MugenCallbacks() {
@@ -90,6 +123,7 @@ public class RepoListFragment extends MvpFragment<PagerView,Presenter> implement
             }
         }).start();
     }
+
     @OnClick({R.id.emptyView, R.id.errorView})
     public void autoRefresh() {
         ptrFrameLayout.autoRefresh();

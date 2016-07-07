@@ -1,13 +1,18 @@
 package com.feicuiedu.gitdroid.network;
 
 import com.feicuiedu.gitdroid.Constans.RepoResult;
+import com.feicuiedu.gitdroid.ReadMe.RepoContentResult;
 
+import okhttp3.RequestBody;
+import okhttp3.ResponseBody;
 import retrofit2.Call;
+import retrofit2.http.Body;
 import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
 import retrofit2.http.Headers;
 import retrofit2.http.POST;
+import retrofit2.http.Path;
 import retrofit2.http.Query;
 
 /**
@@ -47,4 +52,23 @@ String CALL_BACK = "gitdroid";
     //http://api.github.com/search/repositories?q=java&page=1
     @GET("search/repositories")
     Call<RepoResult> getRepoSearch(@Query("q")String language, @Query("page")int pageId);
+    // https://api.github.com/repos/square/okhttp/readme
+    /**
+     * @param owner 仓库的拥有者
+     * @param repo 仓库的名称
+     * @return 仓库的Readme页面的内容，{@link RepoContentResult#content}将是Markdown格式。
+     */
+    @GET("repos/{owner}/{repo}/readme")
+    Call<RepoContentResult> getReadme(@Path("owner") String owner, @Path("repo") String repo);
+
+    /**
+     * 获取一个Markdown内容对应的HTMl页面
+     * @param body 请求体，内容来自{@link RepoContentResult#content}
+     * @return Call对象
+     */
+    @Headers({
+            "Content-Type:text/plain"
+    })
+    @POST("/markdown/raw")
+    Call<ResponseBody> markdown(@Body RequestBody body);
 }

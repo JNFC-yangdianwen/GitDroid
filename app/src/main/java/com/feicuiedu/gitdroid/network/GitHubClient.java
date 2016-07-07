@@ -1,14 +1,18 @@
 package com.feicuiedu.gitdroid.network;
 
-import com.feicuiedu.gitdroid.Constans.Repo;
 import com.feicuiedu.gitdroid.Constans.RepoResult;
+import com.feicuiedu.gitdroid.ReadMe.RepoContentResult;
 
 import okhttp3.OkHttpClient;
+import okhttp3.RequestBody;
+import okhttp3.ResponseBody;
 import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Call;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
+import retrofit2.http.Body;
 import retrofit2.http.Field;
+import retrofit2.http.Path;
 import retrofit2.http.Query;
 
 /**
@@ -65,6 +69,16 @@ public class GitHubClient implements GitHubApi {
     @Override
     public Call<RepoResult> getRepoSearch(@Query("q") String language, @Query("page") int pageId) {
         return gitHubApi.getRepoSearch(language,pageId);
+    }
+
+    @Override
+    public Call<RepoContentResult> getReadme(@Path("owner") String owner, @Path("repo") String repo) {
+        return gitHubApi.getReadme(owner, repo);
+    }
+
+    @Override
+    public Call<ResponseBody> markdown(@Body RequestBody body) {
+        return gitHubApi.markdown(body);
     }
 
 }

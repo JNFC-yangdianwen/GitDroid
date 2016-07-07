@@ -19,18 +19,27 @@ import retrofit2.Response;
 public class Presenter extends MvpNullObjectBasePresenter<PagerView> {
     private Languages languages;
     int pageId=0;
+    private Call<RepoResult> repoSearchCall;
+
     public Presenter(Languages languages) {
         this.languages = languages;
     }
 
-    //下拉刷新加载数据的方法，使用异步处理机制
+    //下拉刷新的方法
     public  void loadData(){
         getView().hideLoadMore();
         getView().showContentView();
         pageId=1;
-        Call<RepoResult> repoSearchCall = GitHubClient.getInstance().getRepoSearch(languages.getName(), pageId);
+        repoSearchCall = GitHubClient.getInstance().getRepoSearch(languages.getPath(), pageId);
         repoSearchCall.enqueue(repoSearchCallBack);
     }
+    //上拉加载更多方法
+    public void loadMoreData(){
+        getView().showLoadMoreLoading();
+        repoSearchCall = GitHubClient.getInstance().getRepoSearch(languages.getPath(), pageId);
+        repoSearchCall.enqueue(loaderMoreCallBack);
+    }
+    //下拉刷新的call模型
     private Callback<RepoResult> repoSearchCallBack=new Callback<RepoResult>() {
         @Override
         public void onResponse(Call<RepoResult> call, Response<RepoResult> response) {
@@ -62,9 +71,35 @@ public class Presenter extends MvpNullObjectBasePresenter<PagerView> {
             getView().showErroView(t.getMessage());
         }
     };
-    public void loadMoreData(){
+    //上拉加载的call模型
+    private Callback<RepoResult>loaderMoreCallBack=new Callback<RepoResult>() {
+        @Override
+        public void onResponse(Call<RepoResult> call, Response<RepoResult> response) {
+            //首先隐藏视图
+            getView().hideLoadMore();
+            RepoResult body = response.body();
+            //如果数据为空则显示错误视图
+            if (body == null) {
+              getView().showLoadMoreErro("error....");
+                return;
+            }
+            //如果没有搜索到仓库，则显示没有更多数据
+            if (body.getTotalCount()<0) {
+             getView().showLoadMoreEnd();
+                return;
+            }
+               //显示数据
+            List<Repo> repoList = body.getRepoList();
+            getView().addMoreData(repoList);
+            pageId++;
 
+        }
 
-    }
+        @Override
+        public void onFailure(Call<RepoResult> call, Throwable t) {
+            getView().hideLoadMore();
+            getView().showLoadMoreErro(t.getMessage());
+        }
+    };
     }
 
