@@ -93,7 +93,7 @@ public class LoginActivity extends MvpActivity<LoginView,LoginPresenter> impleme
         public boolean shouldOverrideUrlLoading(WebView view, String url) {
             Uri uri = Uri.parse(url);
             if (uri.getScheme().equals(GitHubApi.CALL_BACK)){
-                   //获取授权吗
+                //获取授权吗
                 String code = uri.getQueryParameter("code");
                 Log.d(TAG, "shouldOverrideUrlLoading: "+code);
                getPresenter().login(code);

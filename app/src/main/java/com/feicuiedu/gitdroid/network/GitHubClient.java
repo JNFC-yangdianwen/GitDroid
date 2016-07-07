@@ -1,14 +1,19 @@
 package com.feicuiedu.gitdroid.network;
 
+import com.feicuiedu.gitdroid.Constans.Repo;
+import com.feicuiedu.gitdroid.Constans.RepoResult;
+
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Call;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 import retrofit2.http.Field;
+import retrofit2.http.Query;
 
 /**
  * Created by yangdianwen on 16-7-5.
+ * 使用retrofit框架实现网络请求
  */
 public class GitHubClient implements GitHubApi {
     /***
@@ -26,7 +31,9 @@ public class GitHubClient implements GitHubApi {
     }
     //constructor  初始化retrofit对象
     public GitHubClient() {
+        //日志拦截器
         HttpLoggingInterceptor interceptor=new HttpLoggingInterceptor();
+        //设置拦截器的拦截等级
         interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
         OkHttpClient okHttpClient = new OkHttpClient
                 .Builder()
@@ -34,6 +41,7 @@ public class GitHubClient implements GitHubApi {
                 .addInterceptor(new TokenIncepter())//添加拦截Token的拦截器（必须添加否则token拿不到）
                 .build();
         //初始化retrofit对象
+        //https://api.github.com/
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl("https://api.github.com/")
                 //添加转换器
@@ -52,6 +60,11 @@ public class GitHubClient implements GitHubApi {
     @Override
     public Call<User> getUserInfo() {
         return gitHubApi.getUserInfo();
+    }
+
+    @Override
+    public Call<RepoResult> getRepoSearch(@Query("q") String language, @Query("page") int pageId) {
+        return gitHubApi.getRepoSearch(language,pageId);
     }
 
 }

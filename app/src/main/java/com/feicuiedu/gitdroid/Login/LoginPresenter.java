@@ -1,7 +1,5 @@
 package com.feicuiedu.gitdroid.Login;
 
-import android.util.Log;
-
 import com.feicuiedu.gitdroid.network.AccessResultToken;
 import com.feicuiedu.gitdroid.network.CurrentUser;
 import com.feicuiedu.gitdroid.network.GitHubApi;
@@ -15,32 +13,36 @@ import retrofit2.Response;
 
 /**
  * Created by yangdianwen on 16-7-5.
- *
+ *  处理登陆的presenter，继承MvpPresenter（MvpNullObjectBasePresenter<View>）
+ *  此类主要是处理用户的token
  */
 public class LoginPresenter extends MvpNullObjectBasePresenter<LoginView> {
-  ;
     private Call<User> userCall;
     private Call<AccessResultToken> authoToken;
     public static final String TAG="LoginPresenter";
 
     /**
-     * login方法
+     * login方法，此方法是本类中的最重要的方法，
+     *   用户登陆github后给用户的访问令牌
      */
     public void login(String code) {
         getView().showProgress();
+        //为了确保每个用户的令牌都不一样
         if(authoToken!=null)authoToken.cancel();
         authoToken = GitHubClient.getInstance().getOAuthToken(GitHubApi.CLIENT_ID, GitHubApi.CLIENT_SECRET, code);
+        //使用call模型处理异步请求
         authoToken.enqueue(tokenCallback);
     }
         private Callback<AccessResultToken> tokenCallback = new Callback<AccessResultToken>() {
+            //响应成功就可以拿到token
             @Override
             public void onResponse(Call<AccessResultToken> call, Response<AccessResultToken> response) {
                 String accesstoken = response.body().getAccesstoken();
                 CurrentUser.setAccessToken(accesstoken);
+                //拿到用户的token之后就可以去获取用户信息，同样使用call模型处理异步请求
                 if (userCall!=null)userCall.cancel();
                 userCall = GitHubClient.getInstance().getUserInfo();
                 userCall.enqueue(userCallBack);
-                Log.d(TAG, "onResponse: ");
             }
             //失败要显示的内容
             @Override
@@ -51,14 +53,12 @@ public class LoginPresenter extends MvpNullObjectBasePresenter<LoginView> {
                 getView().resetWeb();
             }
         };
-
     public  Callback<User> userCallBack = new Callback<User>() {
+        //响应成功之后就可以获取到用户的基本信息,拿到基本信息之后然后设置到user实体类
         @Override
         public void onResponse(Call<User> call, Response<User> response) {
             User user = response.body();
             CurrentUser.setUser(user);
-            User user1 = CurrentUser.getUser();
-            Log.d(TAG, "onResponse: ............"+user1);
             getView().showMessage("登陆成功");
             getView().navigateToMain();
         }

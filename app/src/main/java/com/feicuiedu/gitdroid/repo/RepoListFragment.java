@@ -4,11 +4,12 @@ import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.feicuiedu.gitdroid.Constans.Languages;
+import com.feicuiedu.gitdroid.Constans.Repo;
 import com.feicuiedu.gitdroid.Presenter.Presenter;
 import com.feicuiedu.gitdroid.R;
 import com.feicuiedu.gitdroid.View.FooterView;
@@ -38,29 +39,31 @@ public class RepoListFragment extends MvpFragment<PagerView,Presenter> implement
     @Bind(R.id.emptyView)
     TextView emptyView;
     @Bind(R.id.errorView) TextView errorView;
-    private ArrayAdapter<String> adapter;
+    List<Repo> datas;
+    Languages languages;
+    private LanguageAdapter adapter;
     private FooterView footerView; // 上拉加载更多的视图
     @Nullable
     @Override public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         return inflater.inflate(R.layout.fragment_repo_list, container, false);
     }
     //实例化RepoListFragment的方法
-    public static RepoListFragment getInstanceFragment(String index){
+    public static RepoListFragment getInstanceFragment(Languages language){
         RepoListFragment f = new RepoListFragment();
                Bundle args = new Bundle();
-               args.putSerializable("index", index);
+               args.putSerializable("index", language);
                 f.setArguments(args);
                 return f;
     }
     @Override
     public Presenter createPresenter() {
-        return new Presenter();
+        return new Presenter(languages);
     }
     @Override public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         ButterKnife.bind(this, view);
-        //
-        adapter = new ArrayAdapter<String>(getContext(), android.R.layout.simple_list_item_1);
+
+        adapter=new LanguageAdapter();
         listView.setAdapter(adapter);
         // 下拉刷新
         ptrFrameLayout.setPtrHandler(new PtrDefaultHandler() {
@@ -119,7 +122,7 @@ public class RepoListFragment extends MvpFragment<PagerView,Presenter> implement
         Toast.makeText(getContext(), msg, Toast.LENGTH_SHORT).show();
     }
     //view刷新数据的方法
-    @Override public void refreshData(List<String> datas) {
+    @Override public void refreshData(List<Repo> datas) {
         adapter.clear();
         adapter.addAll(datas);
     }//view停止刷新的方法
@@ -128,7 +131,7 @@ public class RepoListFragment extends MvpFragment<PagerView,Presenter> implement
     }
     //-----------------------------------------------------------------------------------  ------------------------------------------------------------------------------------
     // 这是上拉加载更多视图层实现------
-    @Override public void addMoreData(List<String> datas) {
+    @Override public void addMoreData(List<Repo> datas) {
         adapter.addAll(datas);
     }
 //

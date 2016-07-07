@@ -8,7 +8,7 @@ import okhttp3.Response;
 
 /**
  * Created by yangdianwen on 16-7-6.
- * 一个过滤器
+ * 一个拦截token的过滤器（实现Iterceptor接口）
  */
 public class TokenIncepter implements Interceptor {
     @Override
