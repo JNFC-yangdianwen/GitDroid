@@ -11,9 +11,14 @@ import android.widget.Toast;
 
 import com.feicuiedu.gitdroid.Constans.Languages;
 import com.feicuiedu.gitdroid.Constans.Repo;
+import com.feicuiedu.gitdroid.Favourite.LocalRepo;
+import com.feicuiedu.gitdroid.Favourite.RepoConverter;
+import com.feicuiedu.gitdroid.Favourite.dao.DbHelper;
+import com.feicuiedu.gitdroid.Favourite.dao.LocalRepoDao;
 import com.feicuiedu.gitdroid.Presenter.Presenter;
 import com.feicuiedu.gitdroid.R;
 import com.feicuiedu.gitdroid.ReadMe.RepoActivity;
+import com.feicuiedu.gitdroid.Utils.ActivityUtils;
 import com.feicuiedu.gitdroid.View.FooterView;
 import com.feicuiedu.gitdroid.View.PagerView;
 import com.hannesdorfmann.mosby.mvp.MvpFragment;
@@ -42,8 +47,7 @@ public class RepoListFragment extends MvpFragment<PagerView,Presenter> implement
     @Bind(R.id.emptyView)
     TextView emptyView;
     @Bind(R.id.errorView) TextView errorView;
-    List<Repo> datas;
-    Languages languages;
+    ActivityUtils activityUtils;
     private LanguageAdapter adapter;
     private FooterView footerView; // 上拉加载更多的视图
     private static final String KEY_LANGUAGE = "key_language";
@@ -72,6 +76,7 @@ public class RepoListFragment extends MvpFragment<PagerView,Presenter> implement
         ButterKnife.bind(this, view);
         adapter=new LanguageAdapter();
         listView.setAdapter(adapter);
+        activityUtils=new ActivityUtils(this);
         //初始化下拉刷新
         initPulltoRefresh();
         //初始化上拉加载
@@ -84,11 +89,24 @@ public class RepoListFragment extends MvpFragment<PagerView,Presenter> implement
                 }
             }, 200);
         }
+        //点击查看热门仓库的readme
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Repo repo = adapter.getItem(position);
                 RepoActivity.open(getContext(),repo);
+            }
+        });
+        //长按item实现收藏
+        listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+
+                Repo repo=adapter.getItem(position);
+                LocalRepo localRepo= RepoConverter.convert(repo);
+                new LocalRepoDao(DbHelper.getInstance(getContext())).creatOrUpdate(localRepo);
+                activityUtils.showToast(R.string.set_favorite_success);
+                return true;
             }
         });
     }
