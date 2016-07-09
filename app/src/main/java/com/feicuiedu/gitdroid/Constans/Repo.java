@@ -4,10 +4,12 @@ package com.feicuiedu.gitdroid.Constans;
 import com.feicuiedu.gitdroid.network.User;
 import com.google.gson.annotations.SerializedName;
 
+import java.io.Serializable;
+
 /**
  * Created by yangdianwen on 16-7-7.
  */
-public class Repo {
+public class Repo implements Serializable {
 
     @SerializedName("id")
     private int id;

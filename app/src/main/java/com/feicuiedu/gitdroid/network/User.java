@@ -2,11 +2,13 @@ package com.feicuiedu.gitdroid.network;
 
 import com.google.gson.annotations.SerializedName;
 
+import java.io.Serializable;
+
 /**
  * Created by yangdianwen on 16-7-6.
  * 用户信息的一个实体类
  */
-public class User  {
+public class User implements Serializable {
 
 //    "login": "octocat",
 //    "id": 1,

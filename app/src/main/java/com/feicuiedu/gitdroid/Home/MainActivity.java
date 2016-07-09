@@ -2,6 +2,7 @@ package com.feicuiedu.gitdroid.Home;
 
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
@@ -14,6 +15,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 
+import com.feicuiedu.gitdroid.Favourite.FavoriteFragment;
 import com.feicuiedu.gitdroid.Login.LoginActivity;
 import com.feicuiedu.gitdroid.R;
 import com.feicuiedu.gitdroid.Utils.ActivityUtils;
@@ -37,6 +39,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private Button btnLogin;
     private ImageView ivIcon;
     private static final String TAG = "MainActivity";
+    private FavoriteFragment favoriteFragment;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -82,12 +86,19 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
          *   4.替换布局replace
          *   5.提交任务fragmentTransaction.commit();
          */
-        FragmentManager manager = getSupportFragmentManager();
         hotRepoFragment = new HotRepoFragment();
+        repalceFragment(hotRepoFragment);
+        favoriteFragment = new FavoriteFragment();
+    }
+
+    private void repalceFragment(Fragment fragment) {
+        FragmentManager manager = getSupportFragmentManager();
+
         FragmentTransaction fragmentTransaction = manager.beginTransaction();
-        fragmentTransaction.replace(R.id.container,hotRepoFragment);
+        fragmentTransaction.replace(R.id.container,fragment);
         fragmentTransaction.commit();
     }
+
     @Override
     protected void onStart() {
         super.onStart();
@@ -113,7 +124,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
        switch (item.getItemId()){
            case R.id.github_hot_repo:
-              activityutils.showToast(R.string.hot_repo);
+               repalceFragment(hotRepoFragment);
+               drawerLayout.closeDrawer(GravityCompat.START);
            break;
            case R.id.github_hot_coder:
               activityutils.showToast(R.string.hot_coder);
@@ -122,7 +134,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
              activityutils.showToast(R.string.trend);
            break;
            case R.id.arsenal_my_repo:
-            activityutils.showToast(R.string.my_repo);
+         repalceFragment(favoriteFragment);
+               drawerLayout.closeDrawer(GravityCompat.START);
            break;
            case R.id.arsenal_recommend:
 

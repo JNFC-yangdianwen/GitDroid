@@ -30,13 +30,13 @@ public class Presenter extends MvpNullObjectBasePresenter<PagerView> {
         getView().hideLoadMore();
         getView().showContentView();
         pageId=1;
-        repoSearchCall = GitHubClient.getInstance().getRepoSearch(languages.getPath(), pageId);
+        repoSearchCall = GitHubClient.getInstance().getRepoSearch("language:"+languages.getPath(), pageId);
         repoSearchCall.enqueue(repoSearchCallBack);
     }
     //上拉加载更多方法
     public void loadMoreData(){
         getView().showLoadMoreLoading();
-        repoSearchCall = GitHubClient.getInstance().getRepoSearch(languages.getPath(), pageId);
+        repoSearchCall = GitHubClient.getInstance().getRepoSearch("language:"+languages.getPath(), pageId);
         repoSearchCall.enqueue(loaderMoreCallBack);
     }
     //下拉刷新的call模型

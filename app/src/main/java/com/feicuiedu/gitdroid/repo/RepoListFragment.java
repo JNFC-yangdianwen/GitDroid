@@ -4,6 +4,7 @@ import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -12,6 +13,7 @@ import com.feicuiedu.gitdroid.Constans.Languages;
 import com.feicuiedu.gitdroid.Constans.Repo;
 import com.feicuiedu.gitdroid.Presenter.Presenter;
 import com.feicuiedu.gitdroid.R;
+import com.feicuiedu.gitdroid.ReadMe.RepoActivity;
 import com.feicuiedu.gitdroid.View.FooterView;
 import com.feicuiedu.gitdroid.View.PagerView;
 import com.hannesdorfmann.mosby.mvp.MvpFragment;
@@ -82,6 +84,13 @@ public class RepoListFragment extends MvpFragment<PagerView,Presenter> implement
                 }
             }, 200);
         }
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Repo repo = adapter.getItem(position);
+                RepoActivity.open(getContext(),repo);
+            }
+        });
     }
 
     private void initPulltoRefresh() {
