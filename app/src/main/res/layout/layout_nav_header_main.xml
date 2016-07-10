@@ -24,14 +24,14 @@
         android:layout_width="@dimen/dp_50"
         android:layout_height="@dimen/dp_50"
         android:layout_marginRight="@dimen/dp_3"
-        android:layout_alignRight="@+id/btnSearch"
+        android:layout_alignRight="@+id/edtSearch"
         android:layout_alignParentTop="true"
         android:layout_marginTop="@dimen/dp_20"
         android:src="@drawable/ic_avatar"/>
 
-    <Button
-        android:id="@+id/btnSearch"
-        android:layout_width="@dimen/dp_300"
+    <EditText
+        android:id="@+id/edtSearch"
+        android:layout_width="@dimen/dp_220"
         android:layout_height="wrap_content"
         android:layout_below="@+id/btnLogin"
         android:drawableLeft="@drawable/ic_search"
@@ -44,6 +44,13 @@
         android:gravity="left|center_vertical"
         android:textColor="@android:color/white"
         android:theme="@style/AppTheme.Button.Transparent"/>
+    <Button
+        android:background="?attr/colorPrimary"
+        android:text="搜索"
+        android:layout_below="@+id/ivIcon"
+        android:layout_toRightOf="@+id/edtSearch"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
 
 
 </RelativeLayout>

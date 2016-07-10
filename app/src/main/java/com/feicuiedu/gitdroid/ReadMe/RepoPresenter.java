@@ -17,6 +17,8 @@ import retrofit2.Response;
 
 /**
  * Created by yangdianwen on 16-7-7.
+ * 使用retrofit请求数据
+ * presentr层继承MvpNullObjectBasePresenter<View></>传入view是为了显示视图
  */
 public class RepoPresenter extends MvpNullObjectBasePresenter<RepoView>{
 
@@ -24,7 +26,9 @@ public class RepoPresenter extends MvpNullObjectBasePresenter<RepoView>{
     private Call<ResponseBody> mdCall;
     //获取readme
     public void getReadme(Repo repo){
+        //获取readme时首先显示进度
         getView().showProgress();
+        //获取仓库的名字
         String login = repo.getOwner().getLogin();
         String name = repo.getName();
         if (repoContentResultCall != null)repoContentResultCall.cancel();
@@ -48,7 +52,8 @@ public class RepoPresenter extends MvpNullObjectBasePresenter<RepoView>{
         }
         @Override
         public void onFailure(Call<RepoContentResult> call, Throwable t) {
-              getView().hideProgress();
+            //请求失败显示错误视图
+            getView().hideProgress();
             getView().setMessage(t.getMessage());
         }
     };
@@ -56,13 +61,13 @@ public class RepoPresenter extends MvpNullObjectBasePresenter<RepoView>{
         @Override
         public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
             try {
+                //得到readme内容
                 String htmlContent = response.body().string();
                 getView().setData(htmlContent);
                 getView().hideProgress();
             } catch (IOException e) {
                 e.printStackTrace();
             }
-
         }
 
         @Override

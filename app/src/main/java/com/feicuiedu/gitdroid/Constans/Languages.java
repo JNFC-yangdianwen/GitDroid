@@ -14,6 +14,7 @@ import java.util.List;
 
 /**
  * Created by yangdianwen on 16-7-7.
+ * 读取本地语言数据库
  */
 public class Languages implements Serializable {
     String path;

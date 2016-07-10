@@ -24,6 +24,7 @@ import pl.droidsonroids.gif.GifImageView;
 
 /**
  * Created by yangdianwen on 16-7-5.
+ * 登陆界面
  */
 public class LoginActivity extends MvpActivity<LoginView,LoginPresenter> implements LoginView{
     @Bind(R.id.toolbar)Toolbar toolbar;
@@ -51,15 +52,9 @@ public class LoginActivity extends MvpActivity<LoginView,LoginPresenter> impleme
         setSupportActionBar(toolbar);
         // 显示标题栏左上角的返回按钮
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-            }
-        });
         initWebView();
     }
-
+     //初始化webview
     private void initWebView() {
         // 删除所有的Cookie，主要是为了清除以前的登录历史记录
         CookieManager cookieManager = CookieManager.getInstance();
@@ -93,7 +88,7 @@ public class LoginActivity extends MvpActivity<LoginView,LoginPresenter> impleme
         public boolean shouldOverrideUrlLoading(WebView view, String url) {
             Uri uri = Uri.parse(url);
             if (uri.getScheme().equals(GitHubApi.CALL_BACK)){
-                //获取授权吗
+                //获取授权码
                 String code = uri.getQueryParameter("code");
                 Log.d(TAG, "shouldOverrideUrlLoading: "+code);
                getPresenter().login(code);
@@ -107,17 +102,17 @@ public class LoginActivity extends MvpActivity<LoginView,LoginPresenter> impleme
     public void showProgress() {
         gifImageView.setVisibility(View.VISIBLE);
     }
-
+    //重置webview
     @Override
     public void resetWeb() {
       initWebView();
     }
-
+    //
     @Override
     public void showMessage(String msg) {
          activityUtils.showToast(msg);
     }
-
+    //导航至主界面
     @Override
     public void navigateToMain() {
      activityUtils.startActivity(MainActivity.class);

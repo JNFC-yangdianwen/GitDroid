@@ -8,6 +8,7 @@ import java.util.List;
 
 /**
  * Created by yangdianwen on 16-7-8.
+ * 一个操作分类的数据库
  */
 public class RepoGroupDao {
 

@@ -21,7 +21,7 @@ public class CurrentUser {
     private static String accessToken;
 
     private static User user;
-
+     //设置用户令牌
     public static void setAccessToken(String accessToken){
         CurrentUser.accessToken = accessToken;
     }
@@ -33,7 +33,7 @@ public class CurrentUser {
         accessToken = null;
         user = null;
     }
-
+   //获取用户令牌
     public static String getAccessToken(){
         return accessToken;
     }
@@ -46,7 +46,7 @@ public class CurrentUser {
     public static boolean hasAccessToken(){
         return accessToken != null;
     }
-
+   //判断用户令牌和用户名是否为null
     public static boolean isEmpty(){
         return accessToken == null || user == null;
     }

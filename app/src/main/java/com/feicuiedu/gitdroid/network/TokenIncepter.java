@@ -13,11 +13,14 @@ import okhttp3.Response;
 public class TokenIncepter implements Interceptor {
     @Override
     public Response intercept(Chain chain) throws IOException {
+        //接口chain用来存储用户信息（用户名，密码）
         Request request = chain.request();
         Request.Builder builder=request.newBuilder();
+        //如果当前用户已经有用户令牌，直接把令牌添加到请求头参数token中
         if (CurrentUser.hasAccessToken()){
              builder.addHeader("Authorization","token "+CurrentUser.getAccessToken());
         }
+        //执行请求
         Response response = chain.proceed(builder.build());
           if (response.isSuccessful()){
               return response;

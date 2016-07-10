@@ -19,6 +19,7 @@ import butterknife.ButterKnife;
 
 /**
  * Created by yangdianwen on 16-7-8.
+ * 本地仓库数据适配器继承自BaseAdapter
  */
 public class LocalRepoAdapter extends BaseAdapter {
     List<LocalRepo> datas;
@@ -26,7 +27,7 @@ public class LocalRepoAdapter extends BaseAdapter {
     public LocalRepoAdapter() {
         datas=new ArrayList<>();
     }
-
+  //设置数据
     public void setData(@Nullable List<LocalRepo> repos){
         datas.clear();
         datas.addAll(repos);
@@ -59,9 +60,11 @@ public class LocalRepoAdapter extends BaseAdapter {
         viewHolder.repoInfo.setText(repo.getDescription());
         viewHolder.repoName.setText(repo.getFullName());
         viewHolder.repoStars.setText(String.format(""+repo.getStarCount()));
+        //ImageLoader加载图片
         ImageLoader.getInstance().displayImage(repo.getAvatar(),viewHolder.ivIcon);
         return convertView;
     }
+    //使用viewholder进行优化
     class ViewHolder{
         @Bind(R.id.tvRepoInfo)TextView repoInfo;
         @Bind(R.id.tvRepoName)TextView repoName;

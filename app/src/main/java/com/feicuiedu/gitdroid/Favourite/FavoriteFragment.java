@@ -30,6 +30,7 @@ import butterknife.OnClick;
 
 /**
  * Created by yangdianwen on 16-7-8.
+ * 收藏的fragment
  */
 public class FavoriteFragment extends Fragment implements PopupMenu.OnMenuItemClickListener{
 @Bind(R.id.tvGroupType)TextView tvGroupType;
@@ -54,13 +55,17 @@ public class FavoriteFragment extends Fragment implements PopupMenu.OnMenuItemCl
         ButterKnife.bind(this,view);
         adapter=new LocalRepoAdapter();
         listView.setAdapter(adapter);
+        //适配器设置全部数据
         adapter.setData(localRepoDao.queryForAll());
+        //listview的上下文菜单
         registerForContextMenu(listView);
     }
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        //类别的操作
         repoGroupDao=new RepoGroupDao(DbHelper.getInstance(getContext()));
+        //本地仓库的操作
         localRepoDao=new LocalRepoDao(DbHelper.getInstance(getContext()));
         activityUtils=new ActivityUtils(getActivity());
     }
@@ -96,18 +101,24 @@ public class FavoriteFragment extends Fragment implements PopupMenu.OnMenuItemCl
             resetData();
             return true;
         }
+        //获取分类的id
         int groupId = item.getGroupId();
         //执行移动
         if (groupId==R.id.menu_group_move){
             if (id==R.id.repo_group_no){
+                //移动到未分类
                 currentlocalRepo.setRepoGroup(null);
             }else {
+                //移动到指定的分类（除了未分类）
                 currentlocalRepo.setRepoGroup(repoGroupDao.queryForId(id));
             }
+            //更新数据
             localRepoDao.creatOrUpdate(currentlocalRepo);
+            //重置数据
             resetData();
             return true;
         }
+
         return super.onContextItemSelected(item);
     }
     //显示popmenu
@@ -117,7 +128,9 @@ public class FavoriteFragment extends Fragment implements PopupMenu.OnMenuItemCl
         //popmenu的布局
         popupMenu.inflate(R.menu.menu_popup_repo_groups);
         Menu menu = popupMenu.getMenu();
+        //分类列表
         List<RepoGroup> repoGroups = repoGroupDao.queryForAll();
+        //popmenu添加子菜单
         for (RepoGroup repogroup:repoGroups) {
             menu.add(Menu.NONE,repogroup.getId(),Menu.NONE,repogroup.getName());
         }
@@ -135,8 +148,9 @@ public class FavoriteFragment extends Fragment implements PopupMenu.OnMenuItemCl
         resetData();
         return true;
     }
-     //重置数据
+    //重置数据
     private void resetData() {
+        adapter.setData(localRepoDao.queryForAll());
         switch (repogroupID){
             case R.id.repo_group_all:
                 adapter.setData(localRepoDao.queryForAll());

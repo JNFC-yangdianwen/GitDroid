@@ -93,7 +93,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     private void repalceFragment(Fragment fragment) {
         FragmentManager manager = getSupportFragmentManager();
-
         FragmentTransaction fragmentTransaction = manager.beginTransaction();
         fragmentTransaction.replace(R.id.container,fragment);
         fragmentTransaction.commit();
@@ -125,7 +124,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
        switch (item.getItemId()){
            case R.id.github_hot_repo:
                repalceFragment(hotRepoFragment);
-               drawerLayout.closeDrawer(GravityCompat.START);
+
            break;
            case R.id.github_hot_coder:
               activityutils.showToast(R.string.hot_coder);
@@ -135,7 +134,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
            break;
            case R.id.arsenal_my_repo:
          repalceFragment(favoriteFragment);
-               drawerLayout.closeDrawer(GravityCompat.START);
            break;
            case R.id.arsenal_recommend:
 
@@ -147,7 +145,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
            break;
        }
-        //返回true代表被checked
+        //点击了drawerLayout的每一个item都会执行drawerLayout的关闭方法
+        drawerLayout.post(new Runnable() {
+            @Override
+            public void run() {
+                drawerLayout.closeDrawer(GravityCompat.START);
+            }
+        });
+
         return true;
     }
       // 当点击了返回按键时

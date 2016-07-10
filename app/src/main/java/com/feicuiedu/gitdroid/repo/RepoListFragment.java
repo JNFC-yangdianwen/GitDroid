@@ -101,7 +101,6 @@ public class RepoListFragment extends MvpFragment<PagerView,Presenter> implement
         listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-
                 Repo repo=adapter.getItem(position);
                 LocalRepo localRepo= RepoConverter.convert(repo);
                 new LocalRepoDao(DbHelper.getInstance(getContext())).creatOrUpdate(localRepo);
@@ -110,12 +109,13 @@ public class RepoListFragment extends MvpFragment<PagerView,Presenter> implement
             }
         });
     }
-
+    //下拉刷新的方法：
     private void initPulltoRefresh() {
         ptrFrameLayout.setLastUpdateTimeRelateObject(this);
         ptrFrameLayout.setBackgroundResource(R.color.colorRefresh);
         // 关闭Header所耗时长
         ptrFrameLayout.setDurationToCloseHeader(1500);
+        //下拉刷新头布局的动画效果
         StoreHouseHeader header = new StoreHouseHeader(getContext());
         header.setPadding(0, 60, 0, 60);
         header.initWithString("I like " + getLanguage().getName());
@@ -127,10 +127,8 @@ public class RepoListFragment extends MvpFragment<PagerView,Presenter> implement
                 getPresenter().loadData();
             }
         });
-        //创建presenter对象
-
     }
-
+    //加载更多的方法
     private void initLoadData() {
         footerView = new FooterView(getContext());
         // 上拉加载更多(listview滑动动最后的位置了，就可以loadmore)

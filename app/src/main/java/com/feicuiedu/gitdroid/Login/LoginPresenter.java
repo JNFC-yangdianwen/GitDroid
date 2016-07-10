@@ -29,19 +29,24 @@ public class LoginPresenter extends MvpNullObjectBasePresenter<LoginView> {
         getView().showProgress();
         //为了确保每个用户的令牌都不一样
         if(authoToken!=null)authoToken.cancel();
+        //获取call模型
         authoToken = GitHubClient.getInstance().getOAuthToken(GitHubApi.CLIENT_ID, GitHubApi.CLIENT_SECRET, code);
         //使用call模型处理异步请求
         authoToken.enqueue(tokenCallback);
     }
         private Callback<AccessResultToken> tokenCallback = new Callback<AccessResultToken>() {
-            //响应成功就可以拿到token
+
             @Override
             public void onResponse(Call<AccessResultToken> call, Response<AccessResultToken> response) {
+                //响应成功就可以拿到token
                 String accesstoken = response.body().getAccesstoken();
+                //设置当前用户的token
                 CurrentUser.setAccessToken(accesstoken);
                 //拿到用户的token之后就可以去获取用户信息，同样使用call模型处理异步请求
                 if (userCall!=null)userCall.cancel();
+                //获取用户信息的call模型
                 userCall = GitHubClient.getInstance().getUserInfo();
+                //执行异步请求
                 userCall.enqueue(userCallBack);
             }
             //失败要显示的内容
@@ -58,8 +63,11 @@ public class LoginPresenter extends MvpNullObjectBasePresenter<LoginView> {
         @Override
         public void onResponse(Call<User> call, Response<User> response) {
             User user = response.body();
+            //设置当前用户的信息
             CurrentUser.setUser(user);
+            //调用view显示
             getView().showMessage("登陆成功");
+            //导航之主界面
             getView().navigateToMain();
         }
         @Override

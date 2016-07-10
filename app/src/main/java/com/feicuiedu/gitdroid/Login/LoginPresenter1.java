@@ -27,6 +27,7 @@ public class LoginPresenter1 extends MvpNullObjectBasePresenter<LoginView> {
     public void login(String code) {
         getView().showProgress();
         if (tokenCall != null) tokenCall.cancel();
+        //获取call模型
         tokenCall = GitHubClient.getInstance().getOAuthToken(GitHubApi.CLIENT_ID, GitHubApi.CLIENT_SECRET, code);
         tokenCall.enqueue(tokenCallback);
     }

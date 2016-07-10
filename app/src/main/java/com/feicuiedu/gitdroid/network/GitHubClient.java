@@ -50,12 +50,13 @@ public class GitHubClient implements GitHubApi {
                 .baseUrl("https://api.github.com/")
                 //添加转换器
                 .addConverterFactory(GsonConverterFactory.create())
+                //添加基站
                 .client(okHttpClient)
                 .build();
         //创建api接口
         gitHubApi = retrofit.create(GitHubApi.class);
     }
-       //获取token令牌
+    //获取token令牌
     @Override
     public Call<AccessResultToken> getOAuthToken(@Field("client_id") String client, @Field("client_secret") String clientSecret, @Field("code") String code) {
         return gitHubApi.getOAuthToken(client,clientSecret,code);
@@ -65,17 +66,17 @@ public class GitHubClient implements GitHubApi {
     public Call<User> getUserInfo() {
         return gitHubApi.getUserInfo();
     }
-
+    //获取仓库的结果（根据查询参数）
     @Override
     public Call<RepoResult> getRepoSearch(@Query("q") String language, @Query("page") int pageId) {
         return gitHubApi.getRepoSearch(language,pageId);
     }
-
+   //获取仓库的readme（根据仓库的路径）
     @Override
     public Call<RepoContentResult> getReadme(@Path("owner") String owner, @Path("repo") String repo) {
         return gitHubApi.getReadme(owner, repo);
     }
-
+   //获取仓库readme的原始的makdown格式文件
     @Override
     public Call<ResponseBody> markdown(@Body RequestBody body) {
         return gitHubApi.markdown(body);

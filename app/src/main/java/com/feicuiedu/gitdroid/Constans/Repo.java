@@ -9,7 +9,7 @@ import java.io.Serializable;
 /**
  * Created by yangdianwen on 16-7-7.
  */
-public class Repo implements Serializable {
+public class Repo implements Serializable{
 
     @SerializedName("id")
     private int id;

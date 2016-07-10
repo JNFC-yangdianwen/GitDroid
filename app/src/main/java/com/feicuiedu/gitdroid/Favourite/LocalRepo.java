@@ -16,6 +16,7 @@ import java.util.List;
 
 /**
  * Created by yangdianwen on 16-7-8.
+ * ormlite数据库
  */
 @DatabaseTable(tableName = "repositories")
 public class LocalRepo  {
@@ -132,6 +133,4 @@ public class LocalRepo  {
             throw new RuntimeException(e);
         }
     }
-
-
 }

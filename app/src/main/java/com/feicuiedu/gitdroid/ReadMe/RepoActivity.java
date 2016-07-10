@@ -32,7 +32,7 @@ public class RepoActivity extends MvpActivity<RepoView,RepoPresenter> implements
     @Bind(R.id.tvRepoInfo)TextView tvRepoInfo;
     @Bind(R.id.tvRepoStars)TextView tvRepoStars;
     @Bind(R.id.tvRepoName)TextView tvRepoName;
-      ActivityUtils activityUtils;
+    ActivityUtils activityUtils;
     private Repo repo;
    public static final String KEY="key_repo";
     @NonNull
@@ -74,19 +74,16 @@ public class RepoActivity extends MvpActivity<RepoView,RepoPresenter> implements
         }
         return super.onOptionsItemSelected(item);
     }
-
     //显示视图的处理
     @Override
     public void showProgress() {
         progressBar.setVisibility(View.VISIBLE);
-
     }
-
     @Override
     public void hideProgress() {
         progressBar.setVisibility(View.GONE);
     }
-
+     //webview 设置数据
     @Override
     public void setData(String data) {
         webView.loadData(data,"text/html","UTF-8");
